@@ -1,0 +1,7 @@
+#container main article p code {
+    background-color: inherit;
+}
+
+#container main article p code.keyseq {
+    background-color: rgba(0, 0, 0, 0.15);
+}

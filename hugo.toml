@@ -1,67 +1,35 @@
 baseURL = 'https://www.emoses.org/'
 languageCode = 'en-us'
+theme = 'hugo-kiera'
 title = 'Evan Moses'
-theme = 'hello-friend-ng'
+
+[markup.highlight]
+        noClasses = false
+
+[author]
+    name = "Evan Moses"           #Author name
+    github = "emoses"         #Github username
+    linkedin = "emoses"       #LinkedIn username
+    email = "webmaster@emoses.org"
+    mastodon = "hachyderm.io/@emoses"
 
 [params]
-  dateform        = "Jan 2, 2006"
-  dateformShort   = "Jan 2"
-  dateformNum     = "2006-01-02"
-  dateformNumTime = "2006-01-02 15:04"
+    tagline = "My blog and projects"
+    #customCSS = []  #Optional Customised CSS
+    disableDarkModeCSS = false # disables css style for users using dark-mode
+    customCSS = ['css/more-styles.css', 'css/style-overrides.css', 'css/syntax.css']
 
-  # Subtitle for home
-  homeSubtitle = "My blog and projects"
+[[params.socialIcons]]
+icon = "fab fa-linkedin"
+title = "Linkedin"
+url = "https://www.linkedin.com/in/emoses"
 
-  # Set disableReadOtherPosts to true in order to hide the links to other posts.
-  disableReadOtherPosts = false
+[[params.socialIcons]]
+icon = "fab fa-github"
+title = "Github"
+url = "https://github.com/emoses"
 
-  # Enable sharing buttons, if you like
-  enableSharingButtons = true
-
-  # Show a global language switcher in the navigation bar
-  enableGlobalLanguageMenu = false
-
-  # Metadata mostly used in document's head
-  description = "Evan Moses' personal site and blog"
-  keywords = "homepage, blog, evanmoses, programmer, resume, go, clojure, emacs, okta"
-  images = [""]
-
-  [[params.social]]
-    name = "github"
-    url = "https://github.com/emoses"
-
-  [[params.social]]
-    name = "linkedin"
-    url = "https://www.linkedin.com/in/emoses/"
-
-  [[params.social]]
-    name = "mastodon"
-    url = "https://hachyderm.io/@emoses":w
-
-
-[taxonomies]
-    category = "blog"
-    tag      = "tags"
-
-[languages]
-  [languages.en]
-    title = "Evan Moses"
-    copyright = '<a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a>'
-
-  [languages.en.params]
-    subtitle  = "My blog nad projects"
-    readOtherPosts = "Read other posts"
-
-    [languages.en.params.logo]
-      logoText = "Evan Moses"
-      logoHomeLink = "/"
-    # or
-    #
-    # path = "/img/your-example-logo.svg"
-    # alt = "Your example logo alt text"
-
-  # And you can even create generic menu
-  [[menu.main]]
-    identifier = "blog"
-    name       = "Blog"
-    url        = "/posts"
+[[params.socialIcons]]
+icon = "fab fa-mastodon"
+title = "Mastodon"
+url = "https://hachyderm.io/@emoses"
