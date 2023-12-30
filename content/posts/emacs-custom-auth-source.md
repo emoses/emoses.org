@@ -28,7 +28,7 @@ It's another package by the author of `magit`, which lets you create and edit
 PRs and otherwise deal with the parts of GitHub (or other forges like Gitlab
 etc.) that aren't part of git proper.
 
-So, this being Emacs, I set out to fix it.
+So, this being Emacs, I got out my clippers and went yak shaving.
 
 ## How does this tool work anyway?
 
@@ -74,9 +74,9 @@ The `forge` manual has a [whole
 section](https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started)[^1]
 about setting up tokens and storing them so `forge` can get it back out.  It
 uses `auth-source`, an Emacs built-in package that's provides an API that wraps
-a bunch of different way to store login credentials, including old-school plaintext
+a bunch of different ways to store login credentials, including old-school plaintext
 `.netrc` files, GPG-encrypted `authinfo.gpg` files, and APIs like the Unix
-`secrets` API or the MacOS Keychain.  Notably it does *not* use the git
+`secrets` API or the MacOS keychain.  Notably it does *not* use the git
 credential helper, presumably because your git credentials (e.g. an SSH key used
 to push to git remotes) aren't usually the same type of thing as the API token
 used by a forge.
@@ -133,7 +133,7 @@ file we find [this function](https://github.com/emacs-mirror/emacs/blob/emacs-29
 (add-hook 'auth-source-backend-parser-functions #'auth-source-backends-parser-macos-keychain)
 ```
 
-This is promising! The function looks like it takes the entry in `auth-sources` and returns an `auth-source-backend` if the entry is a string or symbol that looks like `'macos-keychain-generic`, and it has a `:search-function` that searches the keychain.  Let's copy-paste some code and see where it gets us.
+This is promising! The function looks like it takes the entry in `auth-sources` and returns an `auth-source-backend` if the entry is a string or symbol that looks like `macos-keychain-generic`, and it has a `:search-function` that searches the keychain.  Let's copy-paste some code and see where it gets us.
 
 ```elisp
    (defun auth-source-git-credential-helper-search (&rest TODO)
@@ -218,7 +218,7 @@ which can take a string as input:
             (unwind-protect
                 (progn
                   ;; the first two args are the beginning and end point of a
-                  ;; region to send, or a string and nil, to send a string, which
+                  ;; region to send, or a string and nil to send a string, which
                   ;; is what we'll do.
                   (apply #'call-process-region
                     (format "username=%s\nprotocol=https\nhost=github.com\n\n" user)
@@ -237,26 +237,26 @@ which can take a string as input:
               (kill-buffer out-buf)))))))
 ```
 
-And then here's the function to process the output and return it as the plist
+And then there's the function to process the output and return it as the plist
 that `auth-source` expects.  A couple interesting things here: we'll take a page
 from the keychain code and return a function that returns the secret, rather
-than the secret as a string. This makes it a little harder against an attacker
-that might be able to access memory from another program or a core dump,
-although I'm not convinced this is actually a useful layer of hardening, since
-the "decryption key" is also in memory.  Also: we have to concatenate the host
-and protocol from the output into the `:host` value in the result, so there's a
-little extra work there.  For the actual parsing, we use `looking-at`, which
-tests the text at the point against a regex (setting the `match` as other emacs
-regexp functions do, see [The Match
+than the secret as a string. This defends against an attacker that might be able
+to access memory from another program or a core dump, although I'm not convinced
+this is actually a useful layer of hardening, since the "decryption key" is also
+in memory.  Also: we have to concatenate the host and protocol from the output
+into the `:host` value in the result, so there's a little extra work there.  For
+the actual parsing, we use `looking-at`, which tests the text at the point
+against a regex (setting the `match` as other Emacs regexp functions do, see
+[The Match
 Data](https://www.gnu.org/software/emacs/manual/html_node/elisp/Match-Data.html)
 for more information), and a small helper function to build up the result plist.
 
 ```elisp
 (defun auth-source-git-credential-helper--append (result key &optional filter)
-    "Append the value at match-end to the end of the line to plist
-RESULT with KEY.  If FILTER is present, call it with the match
-data and any existing result at that key, and put its value at
-KEY."
+    "Append the value between match-end and the end of the line to
+plist RESULT with KEY.  If FILTER is present, call it with the
+match data and any existing result at that key, and put its value
+at KEY."
     (let* ((data (buffer-substring-no-properties (match-end 0) (line-end-position)))
            (data (if (functionp filter) (funcall filter data (plist-get result key)) data)))
       (plist-put result key data)))
@@ -311,3 +311,18 @@ secret back out by doing {{< keyseq >}}M-: (funcall (plist-get
 (auth-source-git-credential-helper--process-output) :secret)){{< /keyseq >}}
 (that is, get the value of `:secret` from the plist and call it as a function),
 and we should see the result is "verysecret".  It worked!
+
+## Wrapping it up
+All we have to do is to add our new auth source as a place to look for auth data
+
+```elisp
+  (add-to-list 'auth-sources "git-credential-helper")
+```
+
+And now `forge` is happily retreiving tokens from our internal tool, and I'm back to writing my PR descriptions in Emacs.  Yak shaved!
+
+You can see the full code in [my dotfiles
+repo](https://github.com/emoses/dotfiles/blob/master/emacs/configs/okta.el#L113).
+I may try to turn this into a MELPA package, but I think it would have to be
+generalized a bit, and I've also never built a MELPA package before, so that's a
+whole 'nother yak.
