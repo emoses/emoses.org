@@ -28,6 +28,7 @@ body {
 }
 
 #container main article > pre {
+    border: 1px solid #f0f0a0;
   background-color: #ffffcc;
 }
 

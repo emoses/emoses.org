@@ -113,8 +113,7 @@ time {
 
 #container main {
   line-height: 1.5;
-  font-size: 1.2rem;
-  max-width: 700px;
+  max-width: 800px;
   overflow: hidden;
   grid-area: main;
 }
@@ -175,7 +174,6 @@ time {
   overflow-x: auto;
   padding: 0.8em;
   font-size: 0.9em;
-  box-shadow: 0 -1px 0 #bbbbbb inset;
 }
 
 #container main article .highlight pre {
@@ -288,8 +286,25 @@ width: 100%;
 .meta-aside, #container main section#home ul li aside, #container main article aside {
   margin: 0.5em 0;
   font-family: "Ruda", sans-serif;
-  color: #909090;
+  color: #707070;
   font-size: 0.8em;
+}
+
+#container main article aside {
+    float: right;
+    margin-left: 4px;
+    width: 400px;
+    background-color: #f9f9f9;
+    padding: 0 0.8rem;
+}
+
+
+@media only screen and (max-width: 800px) {
+    #container main article aside {
+        float: none;
+        margin: 0.5em 0;
+        width: unset;
+    }
 }
 
 .meta-aside ul, #container main section#home ul li aside ul, #container main article aside ul {
