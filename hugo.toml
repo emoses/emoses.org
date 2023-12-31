@@ -15,9 +15,10 @@ title = 'Evan Moses'
 
 [params]
     tagline = "My blog and projects"
-    #customCSS = []  #Optional Customised CSS
     disableDarkModeCSS = false # disables css style for users using dark-mode
     customCSS = ['css/more-styles.css', 'css/style-overrides.css', 'css/syntax.css']
+    site_logo = "/img/profile.png"
+    site_logo_classes = "logo"
 
 [[params.socialIcons]]
 icon = "fab fa-linkedin"

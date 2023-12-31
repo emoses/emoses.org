@@ -323,6 +323,10 @@ width: 100%;
   box-shadow: 0 3px 3px #bbbbbb;
 }
 
+.logo {
+    width: unset;
+}
+
 /**
 :not(#home) and :not(#list) is avoiding full width image in list of posts, e.g. home and taxonomy pages
  */
