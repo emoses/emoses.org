@@ -2,7 +2,6 @@
 title = 'Building a custom Emacs auth-source'
 date = '2023-12-22'
 tags = ['emacs', 'security', 'okta']
-draft = true
 +++
 
 My employer, [Okta](https://okta.com), has recently been making security
@@ -12,7 +11,7 @@ tokens to access our code on GitHub.  In place of that, we've now got an
 internal tool that grants us short-lived tokens on demand, after SSOing (through
 Okta of course).
 
-This is a good idea even if it adds a little friction, and means that even if
+This is a good idea even if it adds a little friction, and means that if
 you gain access to my machine somehow you won't automatically have my privileges
 to access our code base. The way it integrates with standard `git` tooling is
 interesting and uses a git subsystem I wasn't previously aware of: the [git
@@ -73,7 +72,7 @@ password=gh_shorttermtoken1
 The `forge` manual has a [whole
 section](https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started)[^1]
 about setting up tokens and storing them so `forge` can get it back out.  It
-uses `auth-source`, an Emacs built-in package that's provides an API that wraps
+uses `auth-source`, an Emacs built-in package that provides an API that wraps
 a bunch of different ways to store login credentials, including old-school plaintext
 `.netrc` files, GPG-encrypted `authinfo.gpg` files, and APIs like the Unix
 `secrets` API or the MacOS keychain.  Notably it does *not* use the git
@@ -105,16 +104,17 @@ backend.  But this is Emacs!  Let's dig in!
 
 I'd messed with `auth-source` before[^2] and knew that you could retrieve a
 secret by calling `(auth-source-search :user USERNAME :host HOST)`. The sources
-that it uses are defined by a list called `auth-sources`, which looks like
-`(macos-keychain-generic macos-keychain-internet "~/.authinfo.gpg" "~/.authinfo"
-"~/.netrc")`.  So I took a look at {{< keyseq >}}C-h v auth-source{{< /keyseq >}}
-and followed it to the
+that it uses are defined by a list called, unsurprisingly, `auth-sources`, which
+looks like `(macos-keychain-generic macos-keychain-internet "~/.authinfo.gpg"
+"~/.authinfo" "~/.netrc")`.  So I took a look at {{< keyseq >}}C-h v
+auth-source{{< /keyseq >}} and followed it to the
 [source](https://github.com/emacs-mirror/emacs/blob/emacs-29.1/lisp/auth-source.el#L225).
 This lays out all the options for auth sources, but didn't tell me what I wanted
 to know, so I browsed through the file some more looking for `macos-keychain`,
 and landed on `auth-source-macos-keychain-search`.  This is the actual function
 that does the searching, but where's it referenced?  Searching for it in the
-file we find [this function](https://github.com/emacs-mirror/emacs/blob/emacs-29.1/lisp/auth-source.el#L413):
+file we find [this
+function](https://github.com/emacs-mirror/emacs/blob/emacs-29.1/lisp/auth-source.el#L413):
 
 [^2]: Getting `forge` to work the first time, actually.
 
@@ -133,7 +133,11 @@ file we find [this function](https://github.com/emacs-mirror/emacs/blob/emacs-29
 (add-hook 'auth-source-backend-parser-functions #'auth-source-backends-parser-macos-keychain)
 ```
 
-This is promising! The function looks like it takes the entry in `auth-sources` and returns an `auth-source-backend` if the entry is a string or symbol that looks like `macos-keychain-generic`, and it has a `:search-function` that searches the keychain.  Let's copy-paste some code and see where it gets us.
+This is promising! It looks like there's a list of parser functions that look at
+an entry in `auth-sources` and return an `auth-source-backend` if the entry is
+a string or symbol that that parser knows how to provide.  For the
+macos-keychain, the backend has a `:search-function` that calls the keychain
+API.  Let's copy-paste some code and see where it gets us.
 
 ```elisp
    (defun auth-source-git-credential-helper-search (&rest TODO)
@@ -246,7 +250,7 @@ this is actually a useful layer of hardening, since the "decryption key" is also
 in memory.  Also: we have to concatenate the host and protocol from the output
 into the `:host` value in the result, so there's a little extra work there.  For
 the actual parsing, we use `looking-at`, which tests the text at the point
-against a regex (setting the `match` as other Emacs regexp functions do, see
+against a regexp (setting the `match` as other Emacs regexp functions do, see
 [The Match
 Data](https://www.gnu.org/software/emacs/manual/html_node/elisp/Match-Data.html)
 for more information), and a small helper function to build up the result plist.
