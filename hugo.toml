@@ -19,6 +19,7 @@ title = 'Evan Moses'
     customCSS = ['css/more-styles.css', 'css/style-overrides.css', 'css/syntax.css']
     site_logo = "/img/profile.png"
     site_logo_classes = "logo"
+    mainSections = ['posts', 'games']
 
 [[params.socialIcons]]
 icon = "fab fa-linkedin"

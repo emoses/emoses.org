@@ -2,6 +2,7 @@
 title = 'Building a custom Emacs auth-source'
 date = '2023-12-22'
 tags = ['emacs', 'security', 'okta']
+categories = ['blog']
 +++
 
 My employer, [Okta](https://okta.com), has recently been making security
