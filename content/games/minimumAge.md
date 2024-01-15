@@ -3,7 +3,6 @@ title = 'Minimum Age Ratings'
 date = 2024-01-15
 categories = ['games']
 tags = ['boardgames', 'general', 'links', 'agerating']
-draft = true
 +++
 
 # Minimum Age ratings on games and why they're terrible
