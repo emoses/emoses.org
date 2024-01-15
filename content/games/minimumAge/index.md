@@ -29,8 +29,8 @@ I often use the printed age rating as a shortcut for judging how appropriate a g
 subtract a couple years because she's been very comfortable with games rated for a few years above her age.  But now I
 know it's even more useless than I thought.
 
-For actually-useful age ratings, I rely on the "Community" Age rating on [BGG](https://boardgamegeek.com).  For [King of
-Tokyo](https://boardgamegeek.com/boardgame/70323/king-tokyo), It's "6+", which seems about right.
+For actually-useful age ratings, I rely on the "Community" Age rating on [BGG](https://boardgamegeek.com).  {{< figure
+src="KingOfTokyo.png" link="https://boardgamegeek.com/boardgame/70323/king-tokyo" caption="For King of Tokyo, It's \"6+\", which seems about right." alt="King of Tokyo on Board Game Geek" >}}
 
 BGG Admins, if you ever come across this, please please *please* add a feature to filter the games list by Community
 Age, and sort by rating.  I would be on that page *all the time*.
