@@ -1,0 +1,86 @@
++++
+layout = "shell"
++++
+<head>
+    <style>
+    body {
+        background-color: #CCC;
+    }
+
+    #background {
+        margin: 5px;
+        position: relative;
+        height: 100vh;
+    }
+
+    #background::before {
+        content: '';
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.25;
+        background-image: url("bagels.jpeg");
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: 50% 0;
+    }
+
+    #main {
+        color:black;
+        position: relative;
+        text-align: center;
+        font-size: 300%;
+       padding-top: 2em;
+    }
+
+    #main > section {
+        display: inline-block;
+        background-color: rgba(200, 200, 200, 0.4);
+    }
+
+    .details {
+        display: flex;
+        justify-content: center;
+        gap: 1em;
+        font-size: 80%;
+    }
+
+    .note {
+        font-size: 80%;
+        color: #333;
+    }
+
+    </style>
+</head>
+<body>
+    <div id="background">
+        <div id="main">
+        <section >
+            <h1>Chenery Families Hangout</h1>
+            <div class="details">
+                <div id="time">
+                    Saturday, March&nbsp;2<br/>
+                    10:00 - 12:00&nbsp;AM
+                </div>
+                <div id="where">
+                    {{ getenv "HUGO_FAMILY_NAMES" }}'s house,<br/>
+                    {{ getenv "HUGO_HOME_ADDRESS_STREET" }}
+                </div>
+            </div>
+            <div id="description">
+            <p>
+                Bagels 🥯, Coffee ☕, kid-friendly crafts 🎨.
+            </p>
+            <p>
+                Come by and say "hi" to your neighbors!
+            </p>
+            <p class="note">
+                Note: we've got a small, friendly (but bark-y) dog, and a cat.
+            </p>
+        </section>
+            </div>
+    </div>
+</body>
