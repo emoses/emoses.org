@@ -8,6 +8,13 @@ draft = true
 
 # Migrating My Home Server
 
+{{< tldr >}}
+* I migrated services on my homeserver to a new machine
+* Moving dockerized services was very straightfoward
+* Using DNS and FQDNs everywhere made migration seamless
+* Caddy is cool too.
+{{< /tldr >}}
+
 ## My old setup
 
 I have a couple little boxes in a downstairs room that run a lot of my self-hosted applications[^1].  For a long time it
