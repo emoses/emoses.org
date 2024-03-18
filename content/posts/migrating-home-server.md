@@ -74,6 +74,8 @@ it with those modules.  I needed the Cloudflare DNS module for acme certificate 
 added that modules in their cute little [web-based configurator](https://caddyserver.com/download) and put the resulting
 binary at `/usr/bin/caddy`.  I left the systemd service that was installed by the `apt` package in place.
 
+I also installed [Prometheus `node-exporter`](https://prometheus.io/docs/guides/node-exporter/) for
+
 ## Time to move stuff
 
 With docker installed, I started moving services over, starting with the least critical services and working my way
@@ -99,9 +101,10 @@ Cloudflare, and those entries are all CNAMEs pointing to my old server.  So now,
 
 And...that's it really!  For most of the services I run, that Just Works and I'm all done:
 
-* [VictroiaMetrics](https://victoriametrics.com/)
-* [Grafana](https://grafana.com/)
-* [Grocy](https://grocy.info/)
+* [VictoriaMetrics](https://victoriametrics.com/) [Prometheus-like metrics ingestion]
+* [cAdvisor](https://github.com/google/cadvisor) [for collecting metrics from the docker runtime)
+* [Grafana](https://grafana.com/) [For looking at the metrics]
+* [Grocy](https://grocy.info/) [Recurring chore management]
 * [openWakeWord](https://github.com/dscripka/openWakeWord)
 * [whisper](https://github.com/rhasspy/wyoming-faster-whisper)
 * [piper](https://github.com/rhasspy/piper)
@@ -126,4 +129,7 @@ It was basically the same process.
 
 ### Frigate
 
-I have a few security cameras and I
+I have a few security cameras, and I use [Frigate](https://frigate.video) as an NVR, recording to my Synology
+NAS. Frigate does person detection with a [Coral TPU](https://coral.ai/products/accelerator), a little peice of
+specialized tensor-processing hardware that plugs in via USB (there are better, faster versions that plugs in via an m.2
+slot, or PCIe, but my old hardware didn't have those slots so I got the USB version). So to make Frigate work, I had to
