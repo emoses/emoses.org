@@ -7,8 +7,10 @@ tags = ['go', 'patterns', 'programming']
 
 I made up a neat little pattern in Go the other day. It's a way to represent a state change in a system by exposing
 different APIs for different states, while only holding state in a single underlying struct. I'm sure I'm not the first
-person to invent this, and it may already a name, so please let me know if you know of one.  I'm going to show an
-instance of the pattern first and the motivation after.
+person to invent this, and it may already a name, so please let me know if you know of one *[Update:
+[apg](https://lobste.rs/~apg) on Lobsters [pointed out the
+name](https://lobste.rs/s/tzgizl/representing_state_as_interfaces_go#c_cvlm2d) "typestate", which I like]*.  I'm going
+to show an instance of the pattern first and the motivation after.
 
 ## The Pattern
 
@@ -74,7 +76,7 @@ func (r *idResolver) Execute(ctx context.Context, executor Executor) (Resolved, 
 
 	/***
 	 * 🪄 THE MAGIC 🪄
-	 * Ooh look I'm just returning this struct as a Resolver!
+	 * Ooh look I'm just returning this struct as a Resolved!
 	 */
 	return r, nil
 }
@@ -129,6 +131,24 @@ result.
 
 The crux of the matter is that the object has different operations that are valid in different states, and Go interfaces
 are a perfect way to expose that.
+
+## Update: Is this just a `Builder`?
+
+A few folks on the internet have pointed out that this is very similar to the Builder pattern that you see pretty
+often in Java/C# (and to a lesser extent in Go), and especially a multiphase [Step Builder](https://www.svlada.com/step-builder-pattern/).
+
+I don't think there's a fundamental difference, but Builders that I'm familar with Generally have a state-change/execute
+  step (`Build()`) that produces an immutable object for use somewhere else, rather than doing any sort of effectful
+  execution.  I think this pattern is both more general (you could certainly use it as a Builder) and has a different
+  purpose.
+
+{{< discussion >}}
+* [Lobsters](https://lobste.rs/s/tzgizl/representing_state_as_interfaces_go)
+* [Hacker News](https://news.ycombinator.com/item?id=39848164)
+{{< /discussion >}}
+
+
+
 
 <!--  LocalWords:  someData AddContextualData SomeContext
  -->
