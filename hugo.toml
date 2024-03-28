@@ -4,7 +4,9 @@ theme = 'hugo-kiera'
 title = 'Evan Moses'
 
 [markup.highlight]
-        noClasses = false
+    noClasses = false
+    style = 'monokai'
+
 
 [author]
     name = "Evan Moses"           #Author name

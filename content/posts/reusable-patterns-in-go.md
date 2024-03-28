@@ -6,19 +6,18 @@ tags = ['go', 'programming']
 draft = true
 +++
 
-# Reuse with Functional Patterns in Go
-
 {{< tldr >}}
 * I wanted to build reusable code for a simple pattern in Go
 * I had to fight the type system a bit but I won in the end
 * Skip to the end of the post for spoilers
 {{< /tldr >}}
 
-I love functional-style programming. When I see a pattern repeat itself in my code my first instinct is to reach for a
-higher-order function to abstract that pattern.
+I have a preference for functional-style programming. I tend to model algorithms in my head as data and transforms of
+that data (versus, say, objects with behaviors).  When I see a pattern repeat itself in my code my first instinct is to
+reach for a higher-order function to abstract that pattern.
 
-However, my day job is coding in Go.  I have very mixed feelings about the language and I'm not gonna start a Go
-flame war here, but I think everyone can agree that Go most certainly does *not* lend itself to functional patterns.
+However, my day job is coding in Go.  I have mixed feelings about the language and I'm not gonna start a Go flame war
+here, but I think everyone can agree that Go most certainly does *not* lend itself to functional patterns.
 
 ## The pattern
 
