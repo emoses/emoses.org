@@ -137,7 +137,7 @@ are a perfect way to expose that.
 A few folks on the internet have pointed out that this is very similar to the Builder pattern that you see pretty
 often in Java/C# (and to a lesser extent in Go), and especially a multiphase [Step Builder](https://www.svlada.com/step-builder-pattern/).
 
-I don't think there's a fundamental difference, but Builders that I'm familar with Generally have a state-change/execute
+I don't think there's a fundamental difference, but Builders that I'm familar with generally have a state-change/execute
   step (`Build()`) that produces an immutable object for use somewhere else, rather than doing any sort of effectful
   execution.  I think this pattern is both more general (you could certainly use it as a Builder) and has a different
   purpose.
