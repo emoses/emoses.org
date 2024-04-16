@@ -25,3 +25,13 @@ The `:before-while` advice lets you run a function that gets the same arguments 
 a truthy value, the advised function is run as usual, but if it returns `nil`, the original function is never run.
 
 Share and enjoy.
+
+## Update {{< datemed "2024-04-16" >}}
+To be clear: I'm not criticizing Emacs or `evil` here.  To the contrary, I've got a personal problem, and thanks to the
+infinite flexibility of Emacs I was able to craft a personal solution in 6 lines.  I wish the rest of my software were so
+flexible.
+
+{{< discussion >}}
+* [Lobsters](https://lobste.rs/s/efmbul/no_i_don_t_want_2_emacs)
+* [Hacker News](https://news.ycombinator.com/item?id=40047256)
+{{< /discussion >}}
