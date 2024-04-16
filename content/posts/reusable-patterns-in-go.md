@@ -1,15 +1,15 @@
 +++
 title = 'Reuse With Functional Patterns in Go'
-date = 2024-02-22
+date = 2024-04-15
 categories = ['blog']
-tags = ['go', 'programming']
+tags = ['go', 'programming', 'patterns']
 draft = true
 +++
 
 {{< tldr >}}
 * I wanted to build reusable code for a simple pattern in Go
 * I had to fight the type system a bit but I won in the end
-* Skip to the end of the post for spoilers
+* Skip to the [end of the post](#solution) for spoilers
 {{< /tldr >}}
 
 I have a preference for functional-style programming. I tend to model algorithms in my head as data and transforms of
@@ -17,15 +17,16 @@ that data (versus, say, objects with behaviors).  When I see a pattern repeat it
 reach for a higher-order function to abstract that pattern.
 
 However, my day job is coding in Go.  I have mixed feelings about the language and I'm not gonna start a Go flame war
-here, but I think everyone can agree that Go most certainly does *not* lend itself to functional patterns.
+here, but I don't think it's controversial to say that Go does not lend itself to functional patterns.
 
 ## The pattern
 
-I had implemented a new algorithm with a new set of cached data to make some security calculations for
-our system; the details are unimportant, but if the result differed with my new algorithm, it would represent a serious
-problem for our customers.  To make sure my new algorithm worked right, my plan was to calculate it the new way *and* the
-old way, compare the two values, log an error if there were differences, and return the old value.  There'd be two
-feature flags: one to enable the new calculation, and one to stop using the old calculation.
+I had implemented a new algorithm with a new set of cached data to make some security calculations for our system; the
+details are unimportant, but if the result differed between the old code and my new algorithm, it would represent a
+serious problem for our customers.  To make sure my new algorithm worked correctly, my plan was to calculate it the new
+way *and* the old way, compare the two values, and return the old value, logging an error if there were differences.
+There'd be two feature flags: `UseNewAlgorithmDark` would enable the new calculation with comparison, and
+`UseNewAlgorithmOnly` to stop using the old calculation and just return the new one.
 
 There are actually a few different places in the code that would be using the new cache, and they did different
 calculations with it.  So I now had multiple places in code that looked something like this:
@@ -37,14 +38,14 @@ func (c *Controller) GetImportantData(
     userId string,
     filter *ImportantDataFilter,
 ) (*ImportantData, error) {
-    useNewWay := c.HasFeature(ctx, tentant, features.UseNewAlgorithmDark)
+    useNewWay := c.HasFeature(ctx, tenant, features.UseNewAlgorithmDark)
 
     if useNewWay {
         newWayLaunched := c.HasFeature(ctx, tenant, features.UseNewAlgorithmOnly)
 
         newWayResult, err := c.getImportantDataNewWay(ctx, tenant, userId, filter)
         if err != nil {
-            c.Log().Error("Error getting data new way, falling back")
+            c.Log().Error("Error getting important data new way, falling back")
             return c.getImportantDataOldWay(ctx, tenant, userId, filter)
         }
 
@@ -81,12 +82,12 @@ another that was *almost* identical, but the signature looked like this:
 
 ```golang
 func (c *Controller) GetDifferentData(ctx context.Context, tenant *models.Tenant,
-    thingId string, relatedThingId string) (*DifferentData, error) { ... }
+    relatedThingId string) (*DifferentData, error) { ... }
 ```
 
 ## The abstraction
 
-Beyond wanting to keep my code DRY, I wanted to codify the Dark Launch pattern so other folks on our team could use it.
+Beyond wanting to keep my code DRY, I wanted to codify the Dark Launch pattern so other folks on our team could reuse it.
 So I started with something like this:
 
 ```golang
@@ -148,13 +149,15 @@ func (c *Controller) GetImportantData(
     filter *ImportantDataFilter,
 ) (*ImportantData, error) {
     dl := DarkLaunch[*ImportantData]{
-        OperationName: "GetImportantData New Way",
+        OperationName: "GetImportantData",
         DarkFlag: features.UseNewAlgorithmDark
         LaunchFlag: features.UseNewAlgorithmOnly
         NewWay: func(ctx context.Context, tenant *models.Tenant) (*ImportantData, error) {
+            // close over extra arguments here
             return c.getImportantDataNewWay(ctx, tenant, userId, filter)
         }
         OldWay: func(ctx context.Context, tenant *models.Tenant) (*ImportantData, error) {
+            // close over extra arguments here
             return c.getImportantDataOldWay(ctx, tenant, userId, filter)
         },
         Cmp: dataIsEqual,
@@ -162,27 +165,28 @@ func (c *Controller) GetImportantData(
         FeatureManager: c.FeatureManager
     }
     return dl.Execute(ctx, tenant)
+}
 ```
 
-This worked, but there were some issues with it.  For one thing, the only way to consume it is to make a fresh closure
+This worked, but it was inelegant.  For one thing, the only way to consume it is to make a fresh closure
 over the arguments each time you want to call it, which means you can't just define a `DarkLaunch` somewhere and
 reference it.  You also need to pass in related machinery (the logger and the feature manager).
 
 ### Go issues, and other languages' solutions
 
-The main issue stems from the inability to have DarkLaunch be generic over the arguments of the NewWay/OldWay functions.
-In more dynamic languages, you'd be able to just `apply` a function to an arbitrary set of arguments:
+The problem is that DarkLaunch isn't generic over the arguments of the NewWay/OldWay functions.  In more dynamic languages,
+you'd be able to just `apply` a function to an arbitrary set of arguments, for instance in Clojure:
 
 ```clojure
 (defn dark-launch [{:keys [get-feature dark-flag launch-flag old-way new-way cmp]}
-                    ctx tenant & args]
+                    tenant & args]
   (if-not (get-feature dark-flag)
-    (apply old-way ctx tenant args) ;; This is the secret sauce
+    (apply old-way tenant args) ;; This is the secret sauce
     (let [launched (get-feature launch-flag)
-          new-way-result (apply new-way ctx tenant args)]
+          new-way-result (apply new-way tenant args)] ;; Here it is again
       (if launched
         new-way-result
-        (let [old-way-result (apply old-way ctx tenant args)] ;; Here it is again
+        (let [old-way-result (apply old-way tenant args)] ;; And here
           (when-not (cmp new-way-result old-way-result)
                   (log "Mismatch"))
           old-way-result)))))
@@ -197,15 +201,17 @@ In more dynamic languages, you'd be able to just `apply` a function to an arbitr
      :cmp data-matches
    })
 
-(defn get-important-data [ctx tenant userId filter]
-   (dark-launch get-important-data-dl ctx tenant userId filter))
+;; It's tempting to fancier with macros and have something like defdarklaunch
+;; but this is a simple port of the Go code and macros would be overcomplicated here anyway.
+(defn get-important-data [tenant userId filter]
+   (dark-launch get-important-data-dl tenant userId filter))
 ```
 
 A language with a sophisticated type system can express the same idea but with strong typing.  I'm sure it can be done
-in Haskell [^1], but I know enough TypeScript to write this, taking advantage of [variadic tuple
+in Haskell [^1], but I know enough TypeScript better, so taking advantage of [variadic tuple
 types](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-0.html):
 
-[^1]: I'm not a Haskeller, suggestions welcome, email me.
+[^1]: I'm not a Haskeller, suggestions welcome.  Contact info in sidebar.
 
 ```typescript
 interface DarkLaunch<T, A extends any[]> {
@@ -221,18 +227,17 @@ interface DarkLaunch<T, A extends any[]> {
 The TypeScript compiler will enforce that `oldWay` and `newWay` have the same number and type of arguments, which is
 what we want.  And that gives us a clue to how we can solve this in Go.
 
-## A Go Solution
+## A Go Solution {#solution}
 
 We don't have a anything like Variadic Tuple Types [^2] in Go, but we can express the idea of a set of types
-bundled together as a simple struct. This requires re-writing the `oldWay`/`newWay` functions slightly to take their
+bundled together: it's a simple struct. This requires re-writing the `oldWay`/`newWay` functions slightly to take their
 arguments as a limited-use struct, but that's not really a big deal.
 
 [^2]: That's fun to say
 
 The other improvement I made was to bundle the "auxiliary" members of the struct like the logger and the FeatureManager
 that are only used to actually execute the code into an `Executor` interface.  `Controller` already satisfied
-`Executor`, so this was a little abstraction that enabled us to bundle the whole thing into its own package.  Here's the
-final code:
+`Executor`, so now we could bundle the whole thing into its own package.  Here's the final code:
 
 ```golang
 package dark_launch
@@ -252,8 +257,8 @@ type DarkLaunch[T any, A any] struct {
 }
 
 func (dl DarkLaunch[T, A]) Execute(
-    x Executor,
     ctx context.Context,
+    x Executor,
     tenant *models.Tenant,
     args A,
 ) (T, error) {
@@ -291,7 +296,7 @@ func (dl DarkLaunch[T, A]) Execute(
     return dl.oldWay(ctx, tenant, args)
 }
 
-/// elsewhere
+// ----- elsewhere -----
 
 type importantDataArgs struct {
     userId string
@@ -305,7 +310,7 @@ func (c *Controller) GetImportantData(
     filter *ImportantDataFilter,
 ) (*ImportantData, error) {
     dl := DarkLaunch[*ImportantData, importantDataArgs]{
-        OperationName: "GetImportantData New Way",
+        OperationName: "GetImportantData",
         DarkFlag: features.UseNewAlgorithmDark,
         LaunchFlag: features.UseNewAlgorithmOnly,
         NewWay: c.getImportantDataNewWay,
@@ -313,7 +318,7 @@ func (c *Controller) GetImportantData(
         Cmp: dataIsEqual,
     }
 
-    return dl.Execute(ctx, tenant, importantDataArgs{userId: userId, filter: filter})
+    return dl.Execute(ctx, c, tenant, importantDataArgs{userId: userId, filter: filter})
 }
 
 // getImporantDataNewWay and getImportantDataOldWay must be re-written to take in the args struct
@@ -322,6 +327,23 @@ func (c *Controller) getImportantDataNewWay(
     tenant *models.Tenant,
     args importantDataArgs,
 ) (*ImportantData, error) { ... }
+
+
+// GetDifferentData works the same, but since it only takes a single argument beyond the common args,
+// we don't even need a limited-use struct
+func (c *Controller) GetDifferentData(ctx context.Context, tenant *models.Tenant,
+    relatedThingId string) (*DifferentData, error) {
+    dl := DarkLaunch[*DifferentData, string]{
+        OperationName: "GetDifferentData",
+        DarkFlag: features.UseNewAlgorithmDark,
+        LaunchFlag: features.UseNewAlgorithmOnly,
+        NewWay: c.getDifferentDataNewWay,
+        OldWay: c.getDifferentDataOldWay,
+        Cmp: dataIsEqual,
+    }
+
+    return dl.Execute(ctx, c, tenant, relatedThingId)
+}
 ```
 
 Much prettier, huh? So Go's type system isn't powerful enough to have a type argument that expresses an arbitrary-length
