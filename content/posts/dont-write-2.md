@@ -14,7 +14,7 @@ So, I added this little gem to my .emacs, and it's saved me any number of times:
 
 ```elisp
 (defun my:evil-write (&rest args)
-"I constantly hit :w2<ret> and save a file named 2.  Verify that I want to do that"
+  "I constantly hit :w2<ret> and save a file named 2.  Verify that I want to do that"
   (if (equal "2" (nth 3 args))
       (y-or-n-p "Did you really mean to save a file named 2?")
     t))
