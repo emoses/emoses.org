@@ -17,6 +17,7 @@ title = 'Evan Moses'
 
 [params]
     tagline = "My blog and projects"
+    description = "Personal blog and projects.  Emacs, programming, making, nerdiness."
     disableDarkModeCSS = false # disables css style for users using dark-mode
     customCSS = ['css/more-styles.css', 'css/style-overrides.css', 'css/syntax.css']
     site_logo = "/img/profile.png"
