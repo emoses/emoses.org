@@ -3,6 +3,8 @@ title = 'Emacs Tidbit: rectangle-number-lines'
 date = 2024-04-24
 categories = ['blog']
 tags = ['emacs']
+description = """Emacs has so many little features that do exactly what you need in very specific circumstances.  Here's
+one that I just found out about: `rectangle-number-lines`."""
 +++
 
 Emacs has so many little features that do exactly what you need in very specific circumstances.  Here's one that I just
