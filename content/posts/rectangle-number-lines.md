@@ -46,3 +46,8 @@ wanted.
 
 [^1]: Since I use `evil`, I just type {{< keyseq >}}C-v{{< /keyseq >}} to enter visual block mode, but I looked it
     up for vanilla Emacs and {{< keyseq >}}C-x SPC{{< /keyseq >}} to set the rectangle mark.
+
+{{< discussion >}}
+* [Lobsters](https://lobste.rs/s/lpodta/emacs_tidbit_rectangle_number_lines)
+* [Hacker News](https://news.ycombinator.com/item?id=40146325)
+{{< /discussion >}}
