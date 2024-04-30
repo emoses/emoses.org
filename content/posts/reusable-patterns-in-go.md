@@ -1,6 +1,6 @@
 +++
 title = 'Reuse With Functional Patterns in Go'
-date = 2024-04-15
+date = 2024-04-30
 categories = ['blog']
 tags = ['go', 'programming', 'patterns']
 draft = true
@@ -21,14 +21,14 @@ here, but I don't think it's controversial to say that Go does not lend itself t
 
 ## The pattern
 
-I had implemented a new algorithm with a new set of cached data to make some security calculations for our system; the
-details are unimportant, but if the result differed between the old code and my new algorithm, it would represent a
-serious problem for our customers.  To make sure my new algorithm worked correctly, my plan was to calculate it the new
-way *and* the old way, compare the two values, and return the old value, logging an error if there were differences.
-There'd be two feature flags: `UseNewAlgorithmDark` would enable the new calculation with comparison, and
-`UseNewAlgorithmOnly` to stop using the old calculation and just return the new one.
+I implemented a new, faster algorithm with to make some security calculations for our system; the details are
+unimportant, but if the result differed between the old code and my new algorithm, it would represent a serious problem
+for our customers.  To make sure my new algorithm worked correctly, my plan was to calculate it the new way *and* the
+old way, compare the two values, and return the old value, logging an error if there were differences.  I added two
+feature flags: `UseNewAlgorithmDark` enabled the new calculation with comparison and logging, and `UseNewAlgorithmOnly`
+stopped using the old calculation and just returned the result of the new one.
 
-There are actually a few different places in the code that would be using the new cache, and they did different
+There are actually a few different places in the code that would be using the new code, and they did different
 calculations with it.  So I now had multiple places in code that looked something like this:
 
 ```golang
@@ -126,9 +126,8 @@ func (dl DarkLaunch[T]) Execute(ctx context.Context, tenant *models.Tenant) (T, 
         }
 
         if !dl.Cmp(newWayResult, oldWayResult) {
-            dl.Logger.Error(fmt.Sprintf("Mismatch between old way and new way for ImportantData"
-                zap.String("userId", user_id),
-                zap.Any("filter", filter),
+            dl.Logger.Error(fmt.Sprintf("Mismatch between old way and new way for %s", dl.OperationName))
+                // Hmmm, I'm missing context data here for logging here, aren't I 🤔
             )
         }
 
@@ -170,7 +169,9 @@ func (c *Controller) GetImportantData(
 
 This worked, but it was inelegant.  For one thing, the only way to consume it is to make a fresh closure
 over the arguments each time you want to call it, which means you can't just define a `DarkLaunch` somewhere and
-reference it.  You also need to pass in related machinery (the logger and the feature manager).
+reference it.  You also need to pass in related machinery (the logger and the feature manager).  Finally, the generic
+`Exectute` method doesn't have access to the arguments of the `NewWay`/`OldWay` functions, so it can't log them if there
+are errors; we'd probably have to insert extra logging in the closures to log properly.
 
 ### Go issues, and other languages' solutions
 
@@ -188,7 +189,7 @@ you'd be able to just `apply` a function to an arbitrary set of arguments, for i
         new-way-result
         (let [old-way-result (apply old-way tenant args)] ;; And here
           (when-not (cmp new-way-result old-way-result)
-                  (log "Mismatch"))
+                  (errorf "Mismatch, args: %s" args)))
           old-way-result)))))
 
 (def get-important-data-dl
@@ -309,6 +310,9 @@ func (c *Controller) GetImportantData(
     userId string,
     filter *ImportantDataFilter,
 ) (*ImportantData, error) {
+    // This could be defined outside this function without much extra work, but it would
+    // only be a teensy efficiency gain and wouldn't add much readability.  I'd do it if
+    // the same args struct and getImporatantData* were re-used in a few different places.
     dl := DarkLaunch[*ImportantData, importantDataArgs]{
         OperationName: "GetImportantData",
         DarkFlag: features.UseNewAlgorithmDark,
@@ -346,7 +350,7 @@ func (c *Controller) GetDifferentData(ctx context.Context, tenant *models.Tenant
 }
 ```
 
-Much prettier, huh? So Go's type system isn't powerful enough to have a type argument that expresses an arbitrary-length
+Much prettier, huh? Go's type system isn't powerful enough to have a type argument that expresses an arbitrary-length
 but finite list of types *as parameters to a function*; however we can use a product type (aka a struct) to represent
 that finite list [^3].
 
