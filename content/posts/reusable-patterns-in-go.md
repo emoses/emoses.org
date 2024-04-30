@@ -1,14 +1,17 @@
 +++
-title = 'Reuse With Functional Patterns in Go'
+title = 'Go Generics: Using Structs for Generic Arguments Lists'
 date = 2024-04-30
 categories = ['blog']
 tags = ['go', 'programming', 'patterns']
-draft = true
+description = """ I wanted to build reusable code for a pattern in Go,
+I had to fight the type system a bit but I won in the end
+We can pack argument lists into structs to make the pattern generic over different sets of arguments to functions"""
 +++
 
 {{< tldr >}}
-* I wanted to build reusable code for a simple pattern in Go
+* I wanted to build reusable code for a pattern in Go
 * I had to fight the type system a bit but I won in the end
+* We can pack argument lists into structs to make the pattern generic over different sets of arguments to functions
 * Skip to the [end of the post](#solution) for spoilers
 {{< /tldr >}}
 
@@ -170,7 +173,7 @@ func (c *Controller) GetImportantData(
 This worked, but it was inelegant.  For one thing, the only way to consume it is to make a fresh closure
 over the arguments each time you want to call it, which means you can't just define a `DarkLaunch` somewhere and
 reference it.  You also need to pass in related machinery (the logger and the feature manager).  Finally, the generic
-`Exectute` method doesn't have access to the arguments of the `NewWay`/`OldWay` functions, so it can't log them if there
+`Execute` method doesn't have access to the arguments of the `NewWay`/`OldWay` functions, so it can't log them if there
 are errors; we'd probably have to insert extra logging in the closures to log properly.
 
 ### Go issues, and other languages' solutions
@@ -352,7 +355,7 @@ func (c *Controller) GetDifferentData(ctx context.Context, tenant *models.Tenant
 
 Much prettier, huh? Go's type system isn't powerful enough to have a type argument that expresses an arbitrary-length
 but finite list of types *as parameters to a function*; however we can use a product type (aka a struct) to represent
-that finite list [^3].
+the finite list [^3].
 
 [^3]: My category theory knowledge comes almost exclusively from reading intro-to-Haskell blog posts linked from the
     orange site.  Please be pedantic at me if I got my terminology wrong.
