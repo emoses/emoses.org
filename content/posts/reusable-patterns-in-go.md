@@ -359,3 +359,8 @@ the finite list [^3].
 
 [^3]: My category theory knowledge comes almost exclusively from reading intro-to-Haskell blog posts linked from the
     orange site.  Please be pedantic at me if I got my terminology wrong.
+
+{{< discussion >}}
+* [Lobsters](https://lobste.rs/s/tuan7i/go_generics_use_structs_for_generic)
+* [Hacker News](https://news.ycombinator.com/item?id=40216706)
+{{< /discussion >}}
