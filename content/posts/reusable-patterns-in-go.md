@@ -1,5 +1,5 @@
 +++
-title = 'Go Generics: Using Structs for Generic Arguments Lists'
+title = 'Go Generics: Use Structs for Generic Arguments Lists'
 date = 2024-04-30
 categories = ['blog']
 tags = ['go', 'programming', 'patterns']
