@@ -363,4 +363,5 @@ the finite list [^3].
 {{< discussion >}}
 * [Lobsters](https://lobste.rs/s/tuan7i/go_generics_use_structs_for_generic)
 * [Hacker News](https://news.ycombinator.com/item?id=40216706)
+* [LinkedIn](https://www.linkedin.com/posts/emoses_go-generics-use-structs-for-generic-arguments-activity-7191573914987208704-2Xzc?utm_source=share&utm_medium=member_desktop)
 {{< /discussion >}}
