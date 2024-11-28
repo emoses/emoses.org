@@ -44,6 +44,10 @@ a {
   color: #666666;
 }
 
+.fake-fa {
+    filter: invert(41%) sepia(0%) saturate(2%) hue-rotate(66deg) brightness(96%) contrast(96%);
+}
+
 blockquote {
   border-left-color: #cecece;
   background-color: #efefef;

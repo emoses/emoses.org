@@ -30,7 +30,11 @@
           {{- if isset $.Site.Author .id }}
              <li>
                <a href="{{ printf .url (index $.Site.Author .id) }}" title="{{ .title }}" rel="me">
-               <i class="{{ .icon }} fa-lg"></i>
+                   {{- if .img -}}
+                    <img class="fake-fa" height="18" width="18" src="{{.img}}" alt="{{.title}}">
+                   {{- else -}}
+                    <i class="{{ .icon }} fa-lg"></i>
+                   {{- end -}}
                </a>
              </li>
            {{- end -}}
