@@ -28,7 +28,45 @@ As you resume your feature, you daydream about gaining such mastery over the for
 
 I will now induct you into the mysteries of git.  Here you go:
 
-* A branch is just a pointer to a commit
-* Nothing committed to a git repo ever goes away[^1]
+1. A branch is just a pointer to a commit
+1. Nothing committed to a git repo ever goes away[^1]
 
 [^1]: Ok this isn't strictly true.  But it's true enough most of the time.
+
+That's pretty much it.  The rest is knowing how to get to the commit you wanted.
+
+### First incantation: `reflog`
+
+A "ref" is anything that refers to a commit.  Branches are refs, and they're stored as ordinary files in your repo's
+.git directory.  Here's some the contents of the .git of the repo where I'm writing this blog right now:
+
+```
+$ tree .git
+...
+├── FETCH_HEAD
+├── HEAD
+├── ORIG_HEAD
+...
+├── refs
+│   ├── heads
+│   │   └── main
+│   ├── remotes
+│   │   └── origin
+│   │       ├── invite
+│   │       └── main
+│   └── tags
+
+```
+
+`refs/heads/main` a file with a single git sha in it, and that's the commit that `main` in my repo refers to right now.
+Since I have `main` checked out, the contents of `HEAD` is
+
+```
+$ cat .git/HEAD
+ref: refs/heads/main
+```
+
+So `HEAD` is a ref that refers to a ref that refers to a commit by its sha (a `**commit` if you will).  It turns out
+`git` keeps a record of all the commits that a certain ref has pointed to over time, and this is called the reflog.
+There's a command that lets you view and manipulate that log, and it's called, unsurprisingly, `git reflog`. [Here's the
+doc ](https://git-scm.com/docs/git-reflog).
