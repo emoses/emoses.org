@@ -19,14 +19,14 @@ The wizard glances at your screen, a crease furrows their brow, and they begin a
 cry.  "RESET!" they command.  Dashes appear and flags rain down in the terminal.
 
 They sit back, a satisfied smile on their face, dusting their hands.  "There you go."  Your week of work is saved!  The
-wizard smiles "Your changes were never gone, you know, they were always right here."  You thank them profusely and they walk
-away.  You know the truth, though: your work was deleted, and the wizard translocated it from some arcane dimension.
+wizard smiles "Your changes were never gone, you know, they were with you all along."  You thank them profusely and they
+walk away dusting their hands.
 
 As you resume your feature, you daydream about gaining such mastery over the forces of the repo.
 
 ## The mysteries
 
-I will now induct you into the mysteries of git.  Here you go:
+I will now induct you into the mysteries of git.  Prepare yourself!
 
 1. A branch is just a pointer to a commit
 1. Nothing committed to a git repo ever goes away[^1]
@@ -66,7 +66,14 @@ $ cat .git/HEAD
 ref: refs/heads/main
 ```
 
-So `HEAD` is a ref that refers to a ref that refers to a commit by its sha (a `**commit` if you will).  It turns out
+So `HEAD` is a ref that refers to a ref that refers to a commit by its sha (a `**commit`, if you will).  It turns out
 `git` keeps a record of all the commits that a certain ref has pointed to over time, and this is called the reflog.
 There's a command that lets you view and manipulate that log, and it's called, unsurprisingly, `git reflog`. [Here's the
 doc ](https://git-scm.com/docs/git-reflog).
+
+This record isn't permanent, it's cleaned up periodically[^2], and it's also not part of the repo.  That it's, it's
+local information kept in your `.git` directory, and not pulled or pushed to remotes like Github when you `pull` or
+`push`.
+
+[^2]: Exactly how often is controlled by two config values, `gc.reflogExpire` (default = 90 days) and
+    `gc.reflogExpireUnreachable` (default = 30 days).  See `git help gc` for more info.
