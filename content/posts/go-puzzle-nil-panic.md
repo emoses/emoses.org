@@ -14,7 +14,7 @@ var someThing *SomeStruct
 // various things happen, including possibly assigning to someThing
 
 if someThing != nil && someThing.Body != nil {
-    fmt.Printf("%s", something.Body)
+    fmt.Printf("%s", someThing.Body)
 }
 ```
 

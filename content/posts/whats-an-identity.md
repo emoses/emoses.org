@@ -1,5 +1,5 @@
 +++
-title = 'What's an Identity'
+title = "What's an Identity"
 date = 2024-08-26
 categories = ['blog']
 tags = ['practices', 'databases']
