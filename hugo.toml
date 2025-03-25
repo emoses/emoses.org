@@ -14,6 +14,7 @@ title = 'Evan Moses'
     linkedin = "emoses"       #LinkedIn username
     email = "webmaster@emoses.org"
     mastodon = "hachyderm.io/@emoses"
+    bluesky = "emoses.org"
 
 [params]
     tagline = "My blog and projects"
@@ -38,3 +39,8 @@ url = "https://github.com/emoses"
 icon = "fab fa-mastodon"
 title = "Mastodon"
 url = "https://hachyderm.io/@emoses"
+
+[[params.socialIcons]]
+icon = "fab fa-bluesky"
+title = "BlueSky"
+url = "https://bsky.app/@emoses.org"
