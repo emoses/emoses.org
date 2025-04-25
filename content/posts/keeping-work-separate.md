@@ -38,15 +38,16 @@ Our internal git setup uses a credential helper, a tool I've written about at {{
 	helper = /usr/local/bin/awesome-security-tool helper
 ```
 
-I added this line near the to of my `dotfiles/git.config` (which is
-symlinked to `~/.gitconfig`):
+I added this line near the bottom of my `dotfiles/git.config` (which is
+symlinked to `~/.gitconfig`).  Git applies configuration in order from top to bottom, with later values overwriting
+earlier values, so if this were at the top, it would be overwritten by the "global" configs from your base dotfiles.
 
 ```ini
 [include]
     path = ~/.local/git.config
 ```
 
-and then moved the work-specific config to `~/.local/git.config`.  Git is happy to silently ignore the include if
+Then I moved the work-specific config to `~/.local/git.config`.  Git is happy to silently ignore the include if
 there's nothing at that path, so I can safely sync this config down to any machine even if it doesn't need any local
 configuration.
 
@@ -62,7 +63,7 @@ because the credentials it gets won't work with my personal account.
 This can be configured on a per-repo basis in the
 `.git/config` for each repo (or by using `git config` without the `--global` flag), but git has a neat feature that will
 conditionally include a config file based on the path to the repo.  I check out my personal repos to a particular
-directory, so I at this config *at the bottom* of my gitconfig[^1]:
+directory, so I at this config *at the bottom* of my gitconfig[^1], after the `include` from earlier:
 
 
 
