@@ -3,10 +3,7 @@ title = 'Git One Liners: Bulk-Amending a Branch'
 date = 2025-04-25
 categories = ['blog']
 tags = ['git', 'tips']
-summary = '''
-I made a mistake with my git config recently, and ended up creating all the commits in a branch with the wrong email
-address.  I can fix it up with a neat one-liner.
-'''
+summary = 'I made a mistake with my git config recently, and ended up creating all the commits in a branch with the wrong email address.  I can fix it up with a neat one-liner.'
 +++
 
 I made a mistake with my git config recently (I've updated {{< reftitle "keeping-work-separate" >}} to avoid that
