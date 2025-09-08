@@ -1,16 +1,15 @@
 +++
 title = 'Building a custom Emacs auth-source'
 date = '2023-12-22'
-tags = ['emacs', 'security', 'okta']
+tags = ['emacs', 'security']
 categories = ['blog']
 +++
 
-My employer, [Okta](https://okta.com), has recently been making security
+My employer, has recently been making security
 improvements to how we access all sorts of internal systems.  As part of that
 hardening, we've been disallowed from using SSH keys and long-lived GitHub
 tokens to access our code on GitHub.  In place of that, we've now got an
-internal tool that grants us short-lived tokens on demand, after SSOing (through
-Okta of course).
+internal tool that grants us short-lived tokens on demand, after SSOing.
 
 This is a good idea even if it adds a little friction, and means that if
 you gain access to my machine somehow you won't automatically have my privileges
@@ -38,32 +37,32 @@ turns out this is [documented quite thoroughly](https://git-scm.com/docs/git-cre
 
 When git tooling needs credentials to communicate with a remote (for example to
 `push`, `pull`, etc.), it checks to see if there's a `credential.helper` in
-the config and executes it to retrieve credentials.  When you set up Okta's new
+the config and executes it to retrieve credentials.  When you set up our new
 internal tool, it adds a line in your `.gitconfig`:
 
 ```toml
 [credential]
-   helper = "/home/emoses/awesome-okta-tool --some options"
+   helper = "/home/emoses/awesome-tool --some options"
 ```
 
 When `git` or any other system needs a token, it executes
-`/home/emoses/awesome-okta-tool --some options get`, and then the helper reads
+`/home/emoses/awesome-tool --some options get`, and then the helper reads
 off of stdin, expecting input like this:
 
 ```
 protocol=https
 host=github.com
-path=okta/imporantrepo
+path=my-company/imporantrepo
 username=emoses
 
 ```
 
-And then goes off and does its thing (including MFA via Okta), and responds with
+And then goes off and does its thing (including MFA), and responds with
 
 ```
 protocol=https
 host=github.com
-path=okta/importantrepo
+path=my-company/importantrepo
 username=emoses
 password=gh_shorttermtoken1
 ```
