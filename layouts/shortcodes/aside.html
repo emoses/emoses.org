@@ -1,1 +1,13 @@
-<aside class="sidenote">{{ .Inner | markdownify }}</aside>
+<aside class="sidenote">
+    {{ .Inner | .Page.RenderString }}
+
+    {{ $src := .Get "figureSrc" }}
+    {{ with .Page.Resources.Get $src }}
+        <figure>
+            <img src="{{ .RelPermalink }}" alt="{{ $.Get "figureAlt" }}">
+            {{ with $.Get "figureCaption" }}
+            <figcaption>{{ . | markdownify }}</figcaption>
+            {{end }}
+        </figure>
+    {{ end }}
+</aside>
