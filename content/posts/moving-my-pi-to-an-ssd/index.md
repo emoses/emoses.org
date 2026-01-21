@@ -5,7 +5,6 @@ categories = ['blog']
 tags = ['rpi', 'raspberrypi', 'selfhosted', 'homeassistant']
 summary = """After setting a project aside for 5 years, I got my RPi4 booting from an SSD and running a 64bit OS by tweaking
 the `USB_MSD_STARTUP_DELAY` bootloader config parameter."""
-draft = true
 +++
 
 {{< tldr >}} After setting a project aside for 5 years, I got my RPi4 booting from an SSD and running a 64bit OS by tweaking
