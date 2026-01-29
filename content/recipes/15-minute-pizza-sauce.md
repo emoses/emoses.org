@@ -5,8 +5,6 @@ categories = ['recipe']
 tags = ['dinner', 'pizza']
 +++
 
-# 15 Minute Pizza Sauce
-
 *Enough for 2 12-inch pizzas, 15 min*
 
 You can throw this together while the oven heats up, and it's really quite tasty.  I was turned on to the virtues of

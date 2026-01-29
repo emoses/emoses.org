@@ -1,11 +1,9 @@
 +++
-title = 'Pasta E Broccoli'
+title = 'Pasta e Broccoli'
 date = 2026-01-27
 categories = ['recipe']
 tags = ['pasta']
 +++
-
-# Pasta e broccoli
 
 *Serves 4, 35 min*
 

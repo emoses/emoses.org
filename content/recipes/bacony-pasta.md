@@ -5,8 +5,6 @@ tags = ['dinner', 'pasta']
 categories = ['recipe']
 +++
 
-# Bacony Pasta
-
 *Serves 4, 30min*
 
 Basically *pasta all'amatriciana* with American-style bacon, this is always a hit. My wife has a sensitivity to onion
