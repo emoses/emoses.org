@@ -6,8 +6,6 @@ tags = ['home-assistant', 'python']
 draft = true
 +++
 
-## A shared dashboard
-
 Our family's schedule lives in a set of shared calendars (hosted on [Fastmail](https://fastmail.com)); if it's not on the calendar, no one's
 gonna do it or go to it.  My kid is a young grade schooler as of this writing, and she's at the age that it's really
 useful for her to have an idea what's happening over the next couple days, but's she's defintely not old enough to have
@@ -35,8 +33,8 @@ TODO: PICTURE HERE
 At first I assumed I'd just be able to turn on "Art Mode" and point it at my Home Assisant dashboard, but I was quickly
 disabused of that notion.
 
-It turns out the custom art in Art Mode is only for static images[^1]. This makes a certain amount of sense, as it's
-intended to appear to be a painting, but it meant I would have to start getting a little clever.
+It turns out the custom art in Art Mode is only for static images[^1]. I suppose this makes a little sense, as it's
+intended to display static art, but it's annoying and meant I would have to start getting a little clever.
 
 [^1]: There are actually a number of video-type images in the Samsung "Art Store", but it's not supported for custom
     user-uploaded art.
