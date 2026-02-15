@@ -2,9 +2,12 @@
     <footer>
         <ul>
             <li>
-                <h6>{{ if .Site.Copyright }}{{ .Site.Copyright | markdownify }} | {{ end }}
+                <h6>Copyright &copy; 2024-{{ dateFormat "2006" now }} Evan Moses |
                     {{ T "rendered" }} <a href="https://gohugo.io" title="Hugo">Hugo</a> |
-                    <a href="{{.Site.BaseURL}}index.xml">{{ T "subscribe" }} </a></h6>
+                    {{ with .Site.GetPage "/posts/my-policy-on-ai" }}
+                        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+                    {{ end }} |
+                    <a href="{{.Site.BaseURL}}index.xml"><i class="fa-solid fa-rss fa-lg"></i>&nbsp;{{ T "subscribe" }} </a></h6>
             </li>
             {{ $currentPage := . }}
             {{ range .Site.Menus.footer }}

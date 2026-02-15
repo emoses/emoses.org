@@ -27,9 +27,9 @@
           {{ end }}
         {{- end -}}
         {{- range .Site.Data.social.social_icons -}}
-          {{- if isset $.Site.Author .id }}
+          {{- if isset $.Site.Params.author .id }}
              <li>
-               <a href="{{ printf .url (index $.Site.Author .id) }}" title="{{ .title }}" rel="me">
+               <a href="{{ printf .url (index $.Site.Params.author .id) }}" title="{{ .title }}" rel="me">
                    {{- if .img -}}
                     <img class="fake-fa" height="18" width="18" src="{{.img}}" alt="{{.title}}">
                    {{- else -}}
@@ -40,6 +40,9 @@
            {{- end -}}
         {{ end }}
       </ul>
+      <p>
+          <a href="{{.Site.BaseURL}}index.xml"><i class="fa-solid fa-rss fa-lg"></i> {{ T "subscribe" }}</a></h6>
+      </p>
       {{ with .Site.Params.tagline }}
       <p><em>{{ . | markdownify }}</em></p>
       {{ end }}

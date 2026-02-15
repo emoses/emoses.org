@@ -10,11 +10,6 @@ title = 'Evan Moses'
 
 [author]
     name = "Evan Moses"           #Author name
-    github = "emoses"         #Github username
-    linkedin = "emoses"       #LinkedIn username
-    email = "webmaster@emoses.org"
-    mastodon = "hachyderm.io/@emoses"
-    bluesky = "emoses.org"
 
 [params]
     tagline = "My blog and projects"
@@ -24,6 +19,13 @@ title = 'Evan Moses'
     site_logo = "/img/profile.png"
     site_logo_classes = "logo"
     mainSections = ['posts', 'games']
+
+[params.author]
+    github = "emoses"         #Github username
+    linkedin = "emoses"       #LinkedIn username
+    email = "webmaster@emoses.org"
+    mastodon = "hachyderm.io/@emoses"
+    bluesky = "emoses.org"
 
 [[params.socialIcons]]
 icon = "fab fa-linkedin"
